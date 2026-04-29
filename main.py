@@ -1,42 +1,26 @@
-from datetime import datetime
-
 from pydantic import BaseModel, EmailStr, ValidationError, Field, field_validator, model_validator
 
 
 class Address(BaseModel):
-    city: str
-    street: str
-    house_number: int
+    city: str = Field(min_length=2)
+    street: str = Field(min_length=3)  # препод сказал минимум 3
+    house_number: int = Field(gt=0)  # препод сказал должно быть положительным
 
     model_config = dict(
-        str_min_length=2,
         str_strip_whitespace=True,
     )
 
 
 class User(BaseModel):
-    name: str
-    age: int
+    name: str = Field(min_length=2, pattern=r'^[a-zA-Zа-яА-ЯёЁ\s]+$')  # только буквы через Field
+    age: int = Field(ge=0, le=120)  # препод сказал через Field
     email: EmailStr
     is_employed: bool
     address: Address
 
     model_config = dict(
-        str_min_length=2,
         str_strip_whitespace=True,
     )
-
-    @field_validator('name')
-    def check_name(cls, value):
-        if not value.replace(' ', '').isalpha():
-            raise ValueError("Name must contain only letters")
-        return value
-
-    @field_validator('age')
-    def check_age(cls, value):
-        if value < 0 or value > 120:
-            raise ValueError("Age must be between 0 and 120")
-        return value
 
     @model_validator(mode='after')
     def check_employment_age(self):
@@ -57,7 +41,7 @@ def register_user(json_string: str):
         return user.model_dump_json()
     except ValidationError as e:
         print(f"Ошибка валидации: {e}")
-        return None
+        return e.json()  # препод сказал чтобы функция возвращала один тип
 
 
 if __name__ == '__main__':
@@ -74,7 +58,6 @@ if __name__ == '__main__':
         }
     }"""
 
-
     json_age_error = """{
         "name": "John Doe",
         "age": 70,
@@ -86,7 +69,6 @@ if __name__ == '__main__':
             "house_number": 123
         }
     }"""
-
 
     json_old_not_employed = """{
         "name": "Alice Smith",
