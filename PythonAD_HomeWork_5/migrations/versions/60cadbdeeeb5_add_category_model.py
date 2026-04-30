@@ -1,8 +1,8 @@
 """add category model
 
-Revision ID: f453b0d20a7e
+Revision ID: 60cadbdeeeb5
 Revises: 
-Create Date: 2026-04-29 07:11:54.337756
+Create Date: 2026-04-30 12:35:16.777711
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f453b0d20a7e'
+revision = '60cadbdeeeb5'
 down_revision = None
 branch_labels = None
 depends_on = None
